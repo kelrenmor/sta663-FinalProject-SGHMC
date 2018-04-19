@@ -1,10 +1,12 @@
+# Place holder until we start working
+
 def is_pos_def(X):
     '''Check whether a matrix X is pos definite.
     Returns True or False, depending on X.
     '''
     return np.all(np.linalg.eigvals(X) > 0)
 
-def sghmc(gradU, eta, niter, alpha, theta_0, V_hat, data):
+def sghmc(gradU, eta, niter, alpha, theta_0, V_hat, dat, batch_size):
     '''Define SGHMC as described in the paper
     Tianqi Chen, Emily B. Fox, Carlos Guestrin 
     Stochastic Gradient Hamiltonian Monte Carlo 
@@ -24,9 +26,9 @@ def sghmc(gradU, eta, niter, alpha, theta_0, V_hat, data):
 
     ### Initialization and checks ###
     # get dimension of the thing you're sampling
-    dim_theta = len(theta_0)
+    p = len(theta_0)
     # set up matrix of 0s to hold samples
-    theta_samps = np.zeros((dim_theta, niter))
+    theta_samps = np.zeros((p, niter*batch_size))
     # fix beta_hat as described on pg. 6 of paper
     beta_hat = 0.5 * V_hat @ eta
     # We're sampling from a N(0, 2(alpha - beta_hat) @ eta)
@@ -35,16 +37,23 @@ def sghmc(gradU, eta, niter, alpha, theta_0, V_hat, data):
     if not is_pos_def( Sigma ): 
         print("Error: (alpha - beta_hat) eta not pos def")
         return
+    
+    # FIXME error if batch size is bigger than data dimension
 
     # initialize nu and theta 
-    nu = np.random.multivariate_normal(np.zeros(dim_theta), eta).reshape(dim_theta,-1)
+    nu = np.random.multivariate_normal(np.zeros(p), eta).reshape(p,-1)
     theta = theta_0
     
     # loop through algorithm to get niter samples
+    it = 0
     for i in range(niter):
-        nu = nu - eta @ gradU(theta, data) - alpha @ nu + \
-             np.random.multivariate_normal(np.zeros(nu.shape[0]), Sigma).reshape(nu.shape[0], -1)
-        theta = theta + nu
-        theta_samps[:,i] = theta.reshape(-1,theta.shape[0])
-
+        dat_resh, nbatches = batch_data(dat, batch_size)
+        for batch in range(nbatches):
+            gradU_batch = gradU(theta, dat_resh[:,:,batch]).reshape(p,-1)
+            nu = nu - eta @ gradU_batch - alpha @ nu + \
+                 np.random.multivariate_normal(np.zeros(p), Sigma).reshape(p, -1)
+            theta = theta + nu
+            theta_samps[:,it] = theta.reshape(-1,p)
+            it = it + 1
+        
     return theta_samps

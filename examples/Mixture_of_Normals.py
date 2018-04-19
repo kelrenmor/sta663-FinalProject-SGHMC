@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import autograd.numpy as np
 from autograd import jacobian
 
-import sghmc_algorithm
+#import sghmc_algorithm
 
 
 ## Example #1:
@@ -45,7 +45,7 @@ def batch_data(data, batch_size):
     
 # Setup the data
 p = 2 #dimension of theta
-theta = np.array([-1, 1])
+theta = np.array([-1, 1]).reshape(p,-1)
 n = 100
 x = np.array([0.5 * np.random.normal(theta[0], 1, (n,1)),
               0.5 * np.random.normal(theta[1], 1, (n,1))]).reshape(-1,1)
@@ -73,7 +73,7 @@ niter = 100
 
 
 # Run sampling algorithm
-samps = sghmc_algorithm(gradU, eta, niter, alpha, theta_0, V)
+samps = sghmc(gradU, eta, niter, alpha, theta_0, V, x, 20)
 
 
 

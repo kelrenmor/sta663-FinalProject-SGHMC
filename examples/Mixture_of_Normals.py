@@ -6,12 +6,13 @@ Created on Thu Apr 19 15:36:51 2018
 @author: isaaclavine
 """
 
-import ad
+#import ad
 # import numpy as np
 import matplotlib.pyplot as plt
-
 import autograd.numpy as np
 from autograd import jacobian
+
+import sghmc_algorithm
 
 
 ## Example #1:
@@ -30,8 +31,20 @@ def log_lik(theta, x):
 def U(theta, x):
     return(-log_prior(theta) - log_lik(theta, x))
     
+def batch_data(data, batch_size):
+    n = data.shape[0]
+    p = data.shape[1]
+    if n % batch_size != 0:
+        n = (n // batch_size) * batch_size
+    ind = np.arange(n)
+    np.random.shuffle(ind)
+    n_batches = n // batch_size
+    data = data[ind].reshape(batch_size, p, n_batches)
+    return(data, n_batches)
+    
     
 # Setup the data
+p = 2 #dimension of theta
 theta = np.array([-1, 1])
 n = 100
 x = np.array([0.5 * np.random.normal(theta[0], 1, (n,1)),
@@ -44,12 +57,25 @@ gradU = jacobian(U)
 # Now for sampling
 
 # Initialize theta
-theta = np.random.normal(size=(2,1))
+theta_0 = np.random.normal(size=(p,1))
 
 # Initialize hyper parameters:
 
 # learning rate
-eta = 0.1 * np.eye(2)
+eta = 0.1 * np.eye(p)
 
-# Friction
-alpha = 0.1 * np.eye(2)
+# Friction rate
+alpha = 0.1 * np.eye(p)
+
+# Arbitrary guess at covariance of noise from mini-batching the data
+V = np.eye(p)
+niter = 100
+
+
+# Run sampling algorithm
+samps = sghmc_algorithm(gradU, eta, niter, alpha, theta_0, V)
+
+
+
+
+

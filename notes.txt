@@ -2,5 +2,5 @@ Notes:
 
 Chan's rubric says "The package should be downloadable and installable with python setup.py install, or even posted to PyPI adn installable with pip install package." See https://docs.python.org/2/install/ for info on this.
 
-
-git add -A && git commit -m "setting up general file structure"
+Cholesky decamp to sample from MVT normal
+@ jit

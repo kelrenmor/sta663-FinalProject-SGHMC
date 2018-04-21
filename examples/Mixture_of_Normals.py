@@ -32,22 +32,12 @@ def log_lik(theta, x):
 def U(theta, x):
     return(-log_prior(theta) - log_lik(theta, x))
     
-def batch_data(data, batch_size):
-    n = data.shape[0]
-    p = data.shape[1]
-    if n % batch_size != 0:
-        n = (n // batch_size) * batch_size
-    ind = np.arange(n)
-    np.random.shuffle(ind)
-    n_batches = n // batch_size
-    data = data[ind].reshape(batch_size, p, n_batches)
-    return(data, n_batches)
     
     
 # Setup the data
 p = 2 #dimension of theta
 theta = np.array([-3.0, 3.0]).reshape(p,-1)
-n = 100
+n = 10000
 x = np.array([np.random.normal(theta[0], 1, (n,1)),
               np.random.normal(theta[1], 1, (n,1))]).reshape(-1,1)
 
@@ -66,7 +56,7 @@ theta_0 = theta
 # Initialize hyper parameters:
 
 # learning rate
-eta = 0.01 * np.eye(p)
+eta = 0.01/n * np.eye(p)
 
 # Friction rate
 alpha = 0.1 * np.eye(p)
@@ -74,7 +64,7 @@ alpha = 0.1 * np.eye(p)
 # Arbitrary guess at covariance of noise from mini-batching the data
 V = np.eye(p)
 niter = 100
-batch_size=20
+batch_size=500
 
 
 # Run sampling algorithm
@@ -82,6 +72,8 @@ samps = sghmc(gradU, eta, niter, alpha, theta_0, V, x, batch_size)
 
 # Plot the density of each theta
 sns.kdeplot(samps[0,:])
+
+plt.plot(samps)
 
 
 

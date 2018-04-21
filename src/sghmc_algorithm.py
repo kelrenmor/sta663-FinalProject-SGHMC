@@ -6,6 +6,17 @@ def is_pos_def(X):
     '''
     return np.all(np.linalg.eigvals(X) > 0)
 
+def batch_data(data, batch_size):
+    n = data.shape[0]
+    p = data.shape[1]
+    if n % batch_size != 0:
+        n = (n // batch_size) * batch_size
+    ind = np.arange(n)
+    np.random.shuffle(ind)
+    n_batches = n // batch_size
+    data = data[ind].reshape(batch_size, p, n_batches)
+    return(data, n_batches)
+
 def sghmc(gradU, eta, niter, alpha, theta_0, V_hat, dat, batch_size):
     '''Define SGHMC as described in the paper
     Tianqi Chen, Emily B. Fox, Carlos Guestrin 
@@ -28,7 +39,7 @@ def sghmc(gradU, eta, niter, alpha, theta_0, V_hat, dat, batch_size):
     # get dimension of the thing you're sampling
     p = len(theta_0)
     # set up matrix of 0s to hold samples
-    theta_samps = np.zeros((p, niter*batch_size))
+    theta_samps = np.zeros((p, niter*(dat.shape[0] // batch_size)))
     # fix beta_hat as described on pg. 6 of paper
     beta_hat = 0.5 * V_hat @ eta
     # We're sampling from a N(0, 2(alpha - beta_hat) @ eta)

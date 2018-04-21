@@ -33,7 +33,6 @@ def U(theta, x):
     return(-log_prior(theta) - log_lik(theta, x))
     
     
-    
 # Setup the data
 p = 2 #dimension of theta
 theta = np.array([-3.0, 3.0]).reshape(p,-1)
@@ -76,6 +75,22 @@ sns.kdeplot(samps[0,:])
 plt.plot(samps)
 
 
+### Easy test example:
+def U(theta, x):
+    return(-2*theta**2 + theta**4)    
+n = 10000
+x = np.array([np.random.normal(0, 1, (n,1))]).reshape(-1,1)
+gradU = jacobian(U, argnum=0)
+theta_0 = np.array([0.0])
+niter = 200
+p=1
+eta = 0.01 * np.eye(p)
+alpha = 0.05 * np.eye(p)
+V = np.eye(p)
+batch_size = 100
+samps = sghmc(gradU, eta, niter, alpha, theta_0, V, x, batch_size)
+
+sns.kdeplot(samps.reshape(-1))
 
 
 

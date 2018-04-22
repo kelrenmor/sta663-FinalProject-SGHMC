@@ -39,7 +39,8 @@ def sghmc(gradU, eta, niter, alpha, theta_0, V_hat, dat, batch_size):
     # get dimension of the thing you're sampling
     p = len(theta_0)
     # set up matrix of 0s to hold samples
-    theta_samps = np.zeros((p, niter*(dat.shape[0] // batch_size)))
+    n = dat.shape[0]
+    theta_samps = np.zeros((p, niter*(n // batch_size)))
     # fix beta_hat as described on pg. 6 of paper
     beta_hat = 0.5 * V_hat @ eta
     # We're sampling from a N(0, 2(alpha - beta_hat) @ eta)
@@ -59,8 +60,12 @@ def sghmc(gradU, eta, niter, alpha, theta_0, V_hat, dat, batch_size):
     it = 0
     for i in range(niter):
         dat_resh, nbatches = batch_data(dat, batch_size)
+        
+        # Resample momentum every epoch
+        nu = np.random.multivariate_normal(np.zeros(p), eta).reshape(p,-1)
+        
         for batch in range(nbatches):
-            gradU_batch = gradU(theta, dat_resh[:,:,batch]).reshape(p,-1)
+            gradU_batch = gradU(theta, dat_resh[:,:,batch], n, batch_size).reshape(p,-1)
             nu = nu - eta @ gradU_batch - alpha @ nu + \
                  np.random.multivariate_normal(np.zeros(p), Sigma).reshape(p, -1)
             theta = theta + nu

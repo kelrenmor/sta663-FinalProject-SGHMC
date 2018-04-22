@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 import autograd.numpy as np
 from autograd import jacobian
 import seaborn as sns
+#from functools import partial
+
 
 #import sghmc_algorithm
 
@@ -26,11 +28,11 @@ def log_prior(theta):
     
     
 def log_lik(theta, x):
-    return(-0.5*(np.log(.5) * np.sum((x-theta[0])**2) + np.log(0.5)*np.sum((x-theta[1]**2))))
+    return(np.log(0.5 * np.exp(-0.5*(theta[0]-x)**2) + 0.5* np.exp(-0.5*(theta[1]-x)**2)))
     
 
-def U(theta, x):
-    return(-log_prior(theta) - log_lik(theta, x))
+def U(theta, x, n, batch_size):
+    return(-log_prior(theta) - (n/batch_size)*sum(log_lik(theta, x)))
     
     
 # Setup the data
@@ -61,9 +63,9 @@ eta = 0.01/n * np.eye(p)
 alpha = 0.1 * np.eye(p)
 
 # Arbitrary guess at covariance of noise from mini-batching the data
-V = np.eye(p)
+V = np.eye(p)*1
 niter = 100
-batch_size=500
+batch_size=1000
 
 
 # Run sampling algorithm
@@ -72,11 +74,13 @@ samps = sghmc(gradU, eta, niter, alpha, theta_0, V, x, batch_size)
 # Plot the density of each theta
 sns.kdeplot(samps[0,:])
 
-plt.plot(samps)
+# Plot the joint density
+sns.kdeplot(samps[0,:], samps[1,:])
+
 
 
 ### Easy test example:
-def U(theta, x):
+def U(theta, x, n=1, batch_size=1):
     return(-2*theta**2 + theta**4)    
 n = 10000
 x = np.array([np.random.normal(0, 1, (n,1))]).reshape(-1,1)
@@ -86,7 +90,7 @@ niter = 200
 p=1
 eta = 0.01 * np.eye(p)
 alpha = 0.05 * np.eye(p)
-V = np.eye(p)
+V = np.eye(p)*4
 batch_size = 100
 samps = sghmc(gradU, eta, niter, alpha, theta_0, V, x, batch_size)
 

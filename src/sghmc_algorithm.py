@@ -1,5 +1,3 @@
-# Place holder until we start working
-
 def is_pos_def(X):
     '''Check whether a matrix X is pos definite.
     Returns True or False, depending on X.
@@ -49,8 +47,10 @@ def sghmc(gradU, eta, niter, alpha, theta_0, V_hat, dat, batch_size):
     if not is_pos_def( Sigma ): 
         print("Error: (alpha - beta_hat) eta not pos def")
         return
-    
-    # FIXME error if batch size is bigger than data dimension
+    # Need batch size to be <= the amount of data
+    if (batch_size > dat.shape[0]): 
+        print("Error: batch_size must be <= number of data points")
+        return
 
     # initialize nu and theta 
     nu = np.random.multivariate_normal(np.zeros(p), eta).reshape(p,-1)

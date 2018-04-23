@@ -25,6 +25,13 @@ def log_lik(theta, x):
 def U(theta, x, n, batch_size):
     return(-log_prior(theta) - (n/batch_size)*sum(log_lik(theta, x)))
        
+#def U2(theta, **kwargs):
+#    return(-log_prior(theta) - (n/batch_size)*sum(log_lik(theta, x)))
+    
+#kwargs = {"n":n, "batch_size":batch_size, "x":x}
+
+#U2(theta, **kwargs)
+    
 # Automatic differentiation to get the gradient
 gradU = jacobian(U, argnum=0)
 
@@ -65,8 +72,8 @@ samps = sghmc(gradU, eta, niter, alpha, theta_0, V, x, batch_size)
 # roughly 2.96 to 3.04, and for \mu_1 from -3.05 to -2.98 
 
 # Plot the density of each mean in mixture
-sns.kdeplot(samps[0,:]) # should be -3
-sns.kdeplot(samps[1,:]) # should be 3
+sns.kdeplot(samps[0,:]) # MLE is -3, prior shrinks this to 0 a little
+sns.kdeplot(samps[1,:]) # MLE is 3, prior shrinks this to 0 a little
 
 # Plot the joint density
 sns.kdeplot(samps[0,:], samps[1,:])

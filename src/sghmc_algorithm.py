@@ -48,7 +48,7 @@ def sghmc(gradU, eta, niter, alpha, theta_0, V_hat, dat, batch_size):
         print("Error: (alpha - beta_hat) eta not pos def")
         return
     # Need batch size to be <= the amount of data
-    if (batch_size > dat.shape[0]): 
+    if (batch_size > n): 
         print("Error: batch_size must be <= number of data points")
         return
 

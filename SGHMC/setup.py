@@ -36,6 +36,7 @@ setup(
         "seaborn >= 0.7.0",
         "matplotlib >= 2.0.0",
         "cppimport >= 18.1.10",
+        "pybind11 >= 2.2.2",
         "numba >= 0.38.0"
     ],
     include_package_data=True

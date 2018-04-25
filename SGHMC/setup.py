@@ -34,7 +34,9 @@ setup(
     install_requires=[
         "autograd >= 1.2",
         "seaborn >= 0.7.0",
-        "matplotlib >= 2.0.0"
+        "matplotlib >= 2.0.0",
+        "cppimport >= 18.1.10",
+        "numba >= 0.38.0"
     ],
     include_package_data=True
 )

@@ -78,7 +78,7 @@ sns.kdeplot(samps[0,:]) # MLE is -3, prior shrinks this to 0 a little
 sns.kdeplot(samps[1,:]) # MLE is 3, prior shrinks this to 0 a little
 
 # Plot the joint density
-sns.kdeplot(samps[0,:], samps[1,:])
+sns.kdeplot(samps[0,:], samps[1,:]) # FIGURE 2a FOR PAPER
 
 
 ################################################################################
@@ -100,4 +100,65 @@ def logprob(theta):
 # but computing the full gradient is prohibtively slow!!
 samps_hmc = hmc(logprob, x0=theta_0.reshape((-1)), n_samples=100) 
 # plot the samples from the HMC algorithm (jointly)
-sns.kdeplot(samps[0,:], samps[1,:])
+sns.kdeplot(samps[0,:], samps[1,:]) # FIGURE 2b FOR PAPER
+
+################################################################################
+
+# Use the hmc function from the pystan package (at all default settings)
+# to sample from this distribution.
+
+# Stan code for a mixtures of normals model with unknown mean:
+# (Used http://modernstatisticalworkflow.blogspot.com/2016/10/finite-mixture-models-in-stan.html)
+stan_mix_code = '''
+data {
+  int N;
+  vector[N] y;
+  int n_groups;
+  vector<lower = 0>[n_groups] sigma; // known SDs
+  vector<lower=0>[n_groups]  weights; // known weight vector
+}
+parameters {
+  vector[n_groups] mu; // unknown means
+}
+model {
+  vector[n_groups] contributions;
+  // priors
+  mu ~ normal(0, 10);  
+  
+  // likelihood
+  for(i in 1:N) {
+    for(k in 1:n_groups) {
+      contributions[k] = log(weights[k]) + normal_lpdf(y[i] | mu[k], sigma[k]);
+    }
+    target += log_sum_exp(contributions);
+  }
+}
+'''
+
+# Set up the data
+p = 2 # dimension of theta
+theta = np.array([-3.0, 3.0]).reshape(p,-1)
+n = 200 # smaller for test
+x = np.array([np.random.normal(theta[0], 1, (n,1)),
+              np.random.normal(theta[1], 1, (n,1))]).flatten()
+
+# Explicitly define std deviation and weights
+sigma = np.array([1,1])
+weights = np.array([0.5,0.5]) # equal probability
+
+mix_dat = {'N': len(x),
+               'y': x,
+               'n_groups': p,
+               'sigma': sigma,
+               'weights': weights}
+
+sm = pystan.StanModel(model_code=stan_mix_code)
+fit = sm.sampling(data=mix_dat, iter=1000, chains=4)
+
+# return a dictionary of arrays
+la = fit.extract(permuted=True)  # return a dictionary of arrays
+mu = la['mu']
+
+# Plot the joint density
+sns.kdeplot(mu[:,0], mu[:,1])  # FIGURE 2c FOR PAPER
+

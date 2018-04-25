@@ -77,8 +77,10 @@ samps = sghmc(gradU, eta, niter, alpha, theta_0, V, x, batch_size)
 sns.kdeplot(samps[0,:]) # MLE is -3, prior shrinks this to 0 a little
 sns.kdeplot(samps[1,:]) # MLE is 3, prior shrinks this to 0 a little
 
-# Plot the joint density
-sns.kdeplot(samps[0,:], samps[1,:]) # FIGURE 2a FOR PAPER
+# plot the samples from the algorithm and save to a file
+kdeplt = sns.kdeplot(samps[0,:], samps[1,:]) # Plot the joint density
+fig = kdeplt.get_figure()
+fig.savefig('MixNorm_a.png')
 
 
 ################################################################################
@@ -99,8 +101,10 @@ def logprob(theta):
 # ideally would use same theta_0 and niter as SGHMC, 
 # but computing the full gradient is prohibtively slow!!
 samps_hmc = hmc(logprob, x0=theta_0.reshape((-1)), n_samples=100) 
-# plot the samples from the HMC algorithm (jointly)
-sns.kdeplot(samps[0,:], samps[1,:]) # FIGURE 2b FOR PAPER
+# plot the samples from the algorithm and save to a file
+kdeplt = sns.kdeplot(samps[0,:], samps[1,:]) # FIGURE 2b FOR PAPER
+fig = kdeplt.get_figure()
+fig.savefig('MixNorm_b.png')
 
 ################################################################################
 
@@ -159,6 +163,8 @@ fit = sm.sampling(data=mix_dat, iter=1000, chains=4)
 la = fit.extract(permuted=True)  # return a dictionary of arrays
 mu = la['mu']
 
-# Plot the joint density
-sns.kdeplot(mu[:,0], mu[:,1])  # FIGURE 2c FOR PAPER
+# plot the samples from the algorithm and save to a file
+kdeplt = sns.kdeplot(mu[:,0], mu[:,1])  # FIGURE 2c FOR PAPER
+fig = kdeplt.get_figure()
+fig.savefig('MixNorm_b.png')
 

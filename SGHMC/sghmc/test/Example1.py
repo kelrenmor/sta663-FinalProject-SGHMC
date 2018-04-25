@@ -36,8 +36,11 @@ batch_size = n # since we're not actually using the data, don't need to batch it
 niter = 500000 # Lots of iterations
 # run SGHMC sampler
 samps_sghmc = sghmc(noisy_gradU, eta, niter, alpha, theta_0, V, x, batch_size)
-# plot the samples from the algorithm
-sns.kdeplot(samps_sghmc.reshape(-1))
+
+# plot the samples from the algorithm and save to a file
+kdeplt = sns.kdeplot(samps_sghmc.reshape(-1)) # Plot the joint density
+fig = kdeplt.get_figure()
+fig.savefig('Example1_a.png')
 
 ################################################################################
 
@@ -62,4 +65,30 @@ def logprob(theta):
 # run the HMC sampler (use same theta_0 as above but fewer samples)
 samps_hmc = hmc(logprob, x0=theta_0, n_samples=500) # NOPE! Still looks bad.
 # plot the samples from the HMC algorithm
-sns.kdeplot(samps_hmc.reshape(-1))
+
+# plot the samples from the algorithm and save to a file
+kdeplt = sns.kdeplot(samps_hmc.reshape(-1)) # Plot the joint density
+fig = kdeplt.get_figure()
+fig.savefig('Example1_b.png')
+
+################################################################################
+
+### Make figure showing the truth compared to our samples
+
+# define exp(-U(theta)), the true density
+def expU(theta):
+    return np.exp(-1*U(theta))/5.36516 # norm constant from Wolfram Alpha
+
+samps_sghmc = np.load("samps_sghmc.npy") # load data run with tons of iters from C++ code
+test_theta = np.linspace(samps_sghmc.min(),samps_sghmc.max(),200)
+
+# just truth
+fig, ax = plt.subplots( nrows=1, ncols=1 )  # create figure & 1 axis
+ax.plot(test_theta,expU(test_theta))
+fig.savefig('Example1_truth.png')
+
+# truth and C++ samples
+fig, ax = plt.subplots()
+sns.kdeplot(samps_sghmc[0,:], ax=ax)  # plot samples (blue)
+plt.plot(test_theta,expU(test_theta)) # plot true density (orange)
+

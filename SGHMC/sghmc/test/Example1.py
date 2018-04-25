@@ -93,3 +93,35 @@ fig, ax = plt.subplots()
 sns.kdeplot(samps_sghmc[0,:], ax=ax)  # plot samples (blue)
 plt.plot(test_theta,expU(test_theta)) # plot true density (orange)
 
+################################################################################
+
+# Stan code for our Example 1 :
+stan_ex1_code = '''
+functions {
+  // Define log probability density function
+  real Ex1_lpdf(real theta) {return -1* (-2*theta^2 + theta^4);}
+}
+data {
+}
+parameters {
+  real theta;
+}
+model {
+  // Sample theta
+  theta ~ Ex1_lpdf();
+}
+
+'''
+ex1_dat = {}
+
+sm = pystan.StanModel(model_code=stan_ex1_code)
+fit = sm.sampling(data=ex1_dat, iter=100000, chains=4)
+
+# return a dictionary of arrays
+la = fit.extract(permuted=True)  # return a dictionary of arrays
+thet_samps = la['theta']
+
+# PLOT and save output
+kdeplt = sns.kdeplot(thet_samps)
+fig = kdeplt.get_figure()
+fig.savefig('Example1_c.png')

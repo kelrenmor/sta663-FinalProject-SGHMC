@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import autograd.numpy as np
 from autograd import jacobian
 import seaborn as sns
+import pystan
 from sghmc.sghmc_algorithm import sghmc
 
 ## Example #1:

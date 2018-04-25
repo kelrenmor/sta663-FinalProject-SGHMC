@@ -1,6 +1,6 @@
 <%
 cfg['compiler_args'] = ['-std=c++11']
-cfg['include_dirs'] = ['../../notebooks/eigen3']
+cfg['include_dirs'] = ['../../eigen3']
 setup_pybind11(cfg)
 %>
 

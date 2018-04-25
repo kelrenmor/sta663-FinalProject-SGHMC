@@ -3,9 +3,11 @@
 """
 Created on Wed Apr 25 10:04:53 2018
 
-@author: isaaclavine
+@author: isaaclavine and kellymoran
 """
-from distutils.core import setup
+
+#from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='SGHMC',
@@ -13,12 +15,11 @@ setup(
     author='Kelly Moran and Isaac Lavine',
     author_email='kelly.moran@duke.edu',
     packages=['sghmc', 'sghmc.test'],
-#    scripts=['bin/Mixture_of_Normals.py','bin/Example1.py'],
+    scripts=['bin/run_examples.py'],
     #url='http://pypi.python.org/pypi/TowelStuff/',
     license='LICENSE.txt',
     description='Implementation of SGHMC algorithm.',
     long_description=open('README.txt').read(),
-    #include_package_data=True
     #package_data={  # Optional
     #    'housing': ['ss15husa.csv'],
     #},
@@ -35,5 +36,5 @@ setup(
         "seaborn >= 0.7.0",
         "matplotlib >= 2.0.0"
     ],
-    
+    include_package_data=True
 )

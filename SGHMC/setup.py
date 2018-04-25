@@ -34,4 +34,5 @@ setup(
         "seaborn >= 0.7.0",
         "matplotlib >= 2.0.0"
     ],
+    include_package_data=True
 )

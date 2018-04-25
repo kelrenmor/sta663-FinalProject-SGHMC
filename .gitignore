@@ -1,6 +1,9 @@
 # My added things
 .DS_Store
 
+# big data files
+SGHMC/bin/*.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

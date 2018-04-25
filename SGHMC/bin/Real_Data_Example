@@ -78,3 +78,48 @@ sns.kdeplot(samps[1,:]) # MLE is -.098
 sns.kdeplot(samps[2,:]) # MLE is 4.86
 sns.kdeplot(samps[3,:]) # MLE is -.606
 
+
+#### SLIGHTLY DIFFERENT DATASET... STOCK PRICES
+import os
+import pandas as pd
+
+
+working_directory = "/Users/isaaclavine/Homework/Spring 2018 Courses/Statistical Computing/Project/sta663-FinalProject-SGHMC/examples"
+os.chdir(working_directory)
+
+#### Or the housing survey
+housing = pd.read_csv("ss15husa.csv")
+prices = prices[~numpy.isnan(x)]
+
+# Predicting household income with the number of bedrooms and year the house was built
+data = housing[['HINCP', 'BDSP', 'YBL']].dropna()
+
+data2 = data.iloc[:100000].values
+y = data2[:,0]
+x = np.c_[np.ones(shape=(data2.shape[0],1)), data2[:,1:]]
+
+# Here's the least squares solution from numpy
+# Res is too big
+beta, res, rank, s = np.linalg.lstsq(x, y)
+
+
+np.random.seed(1234)
+n, p = x.shape
+p += 1
+theta_0 = np.array([res/(n-p), -0.098, 4.86, -.606], dtype=float).reshape(-1,1)
+# learning rate
+eta = 0.01/n * np.eye(p)
+# Friction rate
+alpha = 0.1 * np.eye(p)
+
+V = np.eye(p)
+niter = 100
+batch_size=10000
+data = np.c_[y,x]
+
+samps = sghmc(gradU, eta, niter, alpha, theta_0, V, data, batch_size)
+
+sns.kdeplot(samps[0,:]) # MLE is 30.1
+sns.kdeplot(samps[1,:]) # MLE is -.098
+sns.kdeplot(samps[2,:]) # MLE is 4.86
+sns.kdeplot(samps[3,:]) # MLE is -.606

@@ -1,3 +1,6 @@
+import autograd.numpy as np
+
+
 def is_pos_def(X):
     '''Check whether a matrix X is pos definite.
     Returns True or False, depending on X.

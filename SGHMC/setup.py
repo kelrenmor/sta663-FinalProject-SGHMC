@@ -18,6 +18,7 @@ setup(
     license='LICENSE.txt',
     description='Implementation of SGHMC algorithm.',
     long_description=open('README.txt').read(),
+    #include_package_data=True
     #package_data={  # Optional
     #    'housing': ['ss15husa.csv'],
     #},
@@ -34,5 +35,5 @@ setup(
         "seaborn >= 0.7.0",
         "matplotlib >= 2.0.0"
     ],
-    include_package_data=True
+    
 )

@@ -26,9 +26,12 @@ from sghmc.test import Mixture_of_Normals
 
 # get the samples from Example 1, plus save an output graph
 samps_sghmc = Mixture_of_Normals.MoN_sghmc()
+kdeplt = sns.kdeplot(samps_sghmcs[0,:], samps_sghmc[1,:]) # Plot the joint density
+# Note: Had an issue where plots from within the function look
+# different than plots outside
 
 # get the samples from Example 1, plus save an output graph
 samps_hmc = Mixture_of_Normals.MoN_hmc()
 
 # get the samples from Example 1, plus save an output graph
-samps_stan = Mixture_of_Normals.MoN_stan
+samps_stan = Mixture_of_Normals.MoN_stan()

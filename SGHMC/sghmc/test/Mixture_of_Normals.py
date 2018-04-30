@@ -46,7 +46,7 @@ def MoN_sghmc():
                   np.random.normal(theta[1], 1, (n,1))]).reshape(-1,1)
     
     # Plot the empirical distribution of x (sampled from mixture of normals)
-    sns.kdeplot(x.reshape(-1), bw=1)
+    #sns.kdeplot(x.reshape(-1), bw=1)
     
     ## Initialize parameters and sample 
     
@@ -73,8 +73,8 @@ def MoN_sghmc():
     # roughly 2.96 to 3.04, and for \mu_1 from -3.05 to -2.98 
     
     # Plot the density of each mean in mixture
-    sns.kdeplot(samps[0,:]) # MLE is -3, prior shrinks this to 0 a little
-    sns.kdeplot(samps[1,:]) # MLE is 3, prior shrinks this to 0 a little
+    #sns.kdeplot(samps[0,:]) # MLE is -3, prior shrinks this to 0 a little
+    #sns.kdeplot(samps[1,:]) # MLE is 3, prior shrinks this to 0 a little
     
     # plot the samples from the algorithm and save to a file
     kdeplt = sns.kdeplot(samps[0,:], samps[1,:]) # Plot the joint density

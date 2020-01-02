@@ -128,7 +128,7 @@ def sghmc_cleaned(gradU, eta, niter, alpha, theta_0, V_hat, dat, batch_size):
         dat_resh, nbatches = batch_data(dat, batch_size)
         
         # Resample momentum every epoch
-        nu = eta_chol @ np.random.normal(size=p).reshape(p,-1) # sample from MV normal
+        nu = np.sqrt(eta_chol) @ np.random.normal(size=p).reshape(p,-1) # sample from MV normal
         
         for batch in range(nbatches):
             gradU_batch = gradU(theta, dat_resh[:,:,batch], n, batch_size).reshape(p,-1)
